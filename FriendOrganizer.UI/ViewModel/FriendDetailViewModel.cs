@@ -1,12 +1,14 @@
 ﻿using FriendOrganizer.Model;
 using FriendOrganizer.UI.Data;
 using FriendOrganizer.UI.Event;
+using Prism.Commands;
 using Prism.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace FriendOrganizer.UI.ViewModel
 {
@@ -21,6 +23,18 @@ namespace FriendOrganizer.UI.ViewModel
             _eventAggregator = eventAggregator;
             _eventAggregator.GetEvent<OpenFriendDetailViewEvent>()
                 .Subscribe(OnOpenFriendDetailView);
+
+            SaveCommand = new DelegateCommand(OnSaveExecute, OnSaveCanExecute);
+        }
+
+        private void OnSaveExecute()
+        {
+            throw new NotImplementedException();
+        }
+
+        private bool OnSaveCanExecute()
+        {
+            return true;
         }
 
         private async void OnOpenFriendDetailView(int friendId)
@@ -43,5 +57,7 @@ namespace FriendOrganizer.UI.ViewModel
         {
             Friend = await _dataService.GetByIdAsync(friendId);
         }
+
+        public ICommand SaveCommand { get; }
     }
 }

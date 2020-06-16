@@ -23,5 +23,15 @@ namespace FriendOrganizer.UI.Data
                 return await ctx.Friends.AsNoTracking().SingleAsync(f => f.Id == friendId);
             }
         }
+
+        public Task SaveAsync(Friend friend)
+        {
+            using (var ctx = _contextCreator())
+            {
+                ctx.Friends.Attach(friend);
+                ctx.Entry(friend).State = EntityState.Modified;
+                await ctx.
+            }       
+        }
     }
 }
