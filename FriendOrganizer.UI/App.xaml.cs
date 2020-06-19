@@ -25,5 +25,12 @@ namespace FriendOrganizer.UI
             var mainWindow = container.Resolve<MainWindow>();
             mainWindow.Show();
         }
+
+        private void Application_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show("Unexpected error. Inform Ivan"+ Environment.NewLine + e.Exception.Message, "Error");
+
+            e.Handled = true;
+        }
     }
 }
