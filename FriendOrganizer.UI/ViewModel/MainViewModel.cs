@@ -1,8 +1,10 @@
 ﻿using FriendOrganizer.UI.Event;
 using FriendOrganizer.UI.View.Services;
+using Prism.Commands;
 using Prism.Events;
 using System;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace FriendOrganizer.UI.ViewModel
 {
@@ -23,9 +25,13 @@ namespace FriendOrganizer.UI.ViewModel
             _eventAggregator.GetEvent<OpenFriendDetailViewEvent>().Subscribe(OnOpenFriendDetailView);
 
             NavigationViewModel = navigationViewModel;
+            CreateNewFriendCommand = new DelegateCommand(OnCreateNewFriendExecute);
         }
 
-
+        private void OnCreateNewFriendExecute()
+        {
+            OnOpenFriendDetailView(null);
+        }
 
         public async Task LoadAsync()
         {
@@ -34,6 +40,8 @@ namespace FriendOrganizer.UI.ViewModel
 
         private IEventAggregator _eventAggregator;
 
+
+        public ICommand CreateNewFriendCommand { get; }
         public INavigationViewModel NavigationViewModel { get; }
 
         private Func<IFriendDetailViewModel> _friendDetailViewModelCreator;
@@ -50,7 +58,7 @@ namespace FriendOrganizer.UI.ViewModel
         }
 
 
-        private async void OnOpenFriendDetailView(int friendId)
+        private async void OnOpenFriendDetailView(int? friendId)
         {
             if (FriendDetailViewModel != null && FriendDetailViewModel.HasChanges)
             {
