@@ -1,9 +1,7 @@
-﻿using FriendOrganizer.Model;
-using FriendOrganizer.UI.Data;
-using FriendOrganizer.UI.Event;
+﻿using FriendOrganizer.UI.Event;
+using FriendOrganizer.UI.View.Services;
 using Prism.Events;
 using System;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace FriendOrganizer.UI.ViewModel
@@ -14,13 +12,17 @@ namespace FriendOrganizer.UI.ViewModel
         private IFriendDetailViewModel _friendDetailViewModel;
 
 
-        public MainViewModel(INavigationViewModel navigationViewModel, Func<IFriendDetailViewModel> friendDetailViewModelCreator, IEventAggregator eventAggregator)
+        public MainViewModel(INavigationViewModel navigationViewModel, Func<IFriendDetailViewModel> friendDetailViewModelCreator, 
+            IEventAggregator eventAggregator, IMessageDialogService messageDialogService)
         {
             _eventAggregator = eventAggregator;
-            NavigationViewModel = navigationViewModel;
+            
             _friendDetailViewModelCreator = friendDetailViewModelCreator;
-
+            _messageDialogService = messageDialogService;
+            
             _eventAggregator.GetEvent<OpenFriendDetailViewEvent>().Subscribe(OnOpenFriendDetailView);
+
+            NavigationViewModel = navigationViewModel;
         }
 
 
@@ -35,7 +37,7 @@ namespace FriendOrganizer.UI.ViewModel
         public INavigationViewModel NavigationViewModel { get; }
 
         private Func<IFriendDetailViewModel> _friendDetailViewModelCreator;
-
+        private IMessageDialogService _messageDialogService;
 
         public IFriendDetailViewModel FriendDetailViewModel
         {
@@ -50,6 +52,14 @@ namespace FriendOrganizer.UI.ViewModel
 
         private async void OnOpenFriendDetailView(int friendId)
         {
+            if (FriendDetailViewModel != null && FriendDetailViewModel.HasChanges)
+            {
+                var result = _messageDialogService.ShowOkCancelDialog("You've made changes. Navigate away?", "Question");
+                if (result == MessageDialogResult.Cancel)
+                {
+                    return;
+                }
+            }
             FriendDetailViewModel = _friendDetailViewModelCreator();
             await FriendDetailViewModel.LoadAsync(friendId);
         }
