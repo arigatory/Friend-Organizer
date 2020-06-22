@@ -28,8 +28,11 @@ namespace FriendOrganizer.UI.ViewModel
             _eventAggregator = eventAggregator;
             
             SaveCommand = new DelegateCommand(OnSaveExecute, OnSaveCanExecute);
+            DeleteCommand = new DelegateCommand(OnDeleteExecute);
         }
+
         
+
         public async Task LoadAsync(int? friendId)
         {
             var friend = friendId.HasValue
@@ -73,6 +76,7 @@ namespace FriendOrganizer.UI.ViewModel
             }
         }
         public ICommand SaveCommand { get; }
+        public ICommand DeleteCommand { get; }
 
         public bool HasChanges
         {
@@ -104,6 +108,13 @@ namespace FriendOrganizer.UI.ViewModel
         private bool OnSaveCanExecute()
         {
             return Friend != null && !Friend.HasErrors && HasChanges;
+        }
+
+        private async void OnDeleteExecute()
+        {
+            _friendRepository.Remove(Friend.Model);
+            await _friendRepository.SaveAsync();
+            _eventAggregator.GetEvent<AfterFriendDeletedEvent>().Publish(Friend.Id);
         }
     }
 }
