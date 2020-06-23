@@ -22,6 +22,14 @@
                 new Friend { FirstName = "Sara", LastName = "Huber" },
                 new Friend { FirstName = "Erkan", LastName = "Egin" }
                 );
+            context.ProgrammingLanguages.AddOrUpdate(
+                pl => pl.Name,
+                new ProgrammingLanguage { Name = "C#" },
+                new ProgrammingLanguage { Name = "TypeScript" },
+                new ProgrammingLanguage { Name = "F#" },
+                new ProgrammingLanguage { Name = "Swift" },
+                new ProgrammingLanguage { Name = "Java" }
+                );
         }
     }
 }
