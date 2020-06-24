@@ -16,10 +16,6 @@ namespace FriendOrganizer.UI.Wrapper
             set { SetValue(value); } 
         }
 
-        
-
-        
-
         public string LastName
         {
             get { return GetValue<string>(); }
@@ -29,6 +25,12 @@ namespace FriendOrganizer.UI.Wrapper
         public string Email
         {
             get { return GetValue<string>(); }
+            set { SetValue(value); }
+        }
+
+        public int? FavoriteLanguageId 
+        {
+            get { return GetValue<int?>(); }
             set { SetValue(value); }
         }
 

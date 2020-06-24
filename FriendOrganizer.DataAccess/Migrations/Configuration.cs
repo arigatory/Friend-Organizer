@@ -30,6 +30,11 @@
                 new ProgrammingLanguage { Name = "Swift" },
                 new ProgrammingLanguage { Name = "Java" }
                 );
+            
+            context.SaveChanges();
+
+            context.FriendPhoneNumbers.AddOrUpdate(pn => pn.Number,
+                new FriendPhoneNumber { Number = "+79057610952", FriendId = context.Friends.First().Id});
         }
     }
 }
