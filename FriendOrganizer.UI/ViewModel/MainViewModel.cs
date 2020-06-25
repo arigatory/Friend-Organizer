@@ -1,4 +1,5 @@
-﻿using FriendOrganizer.UI.Event;
+﻿using Autofac.Features.Indexed;
+using FriendOrganizer.UI.Event;
 using FriendOrganizer.UI.View.Services;
 using Prism.Commands;
 using Prism.Events;
@@ -14,16 +15,21 @@ namespace FriendOrganizer.UI.ViewModel
         private IDetailViewModel _detailViewModel;
 
 
-        public MainViewModel(INavigationViewModel navigationViewModel, Func<IFriendDetailViewModel> friendDetailViewModelCreator, 
-            IEventAggregator eventAggregator, IMessageDialogService messageDialogService)
+        public MainViewModel(INavigationViewModel navigationViewModel, 
+            IIndex<string,IDetailViewModel> detailViewModelCreator,
+            IEventAggregator eventAggregator, 
+            IMessageDialogService messageDialogService)
         {
             _eventAggregator = eventAggregator;
             
-            _friendDetailViewModelCreator = friendDetailViewModelCreator;
+            
+            _detailViewModelCreator = detailViewModelCreator;
             _messageDialogService = messageDialogService;
             
-            _eventAggregator.GetEvent<OpenDetailViewEvent>().Subscribe(OnOpenDetailView);
-            _eventAggregator.GetEvent<AfterDetailDeletedEvent>().Subscribe(AfterDetailDeleted);
+            _eventAggregator.GetEvent<OpenDetailViewEvent>()
+                .Subscribe(OnOpenDetailView);
+            _eventAggregator.GetEvent<AfterDetailDeletedEvent>()
+                .Subscribe(AfterDetailDeleted);
 
             NavigationViewModel = navigationViewModel;
             CreateNewDetailCommand = new DelegateCommand<Type>(OnCreateNewDetailExecute);
@@ -42,12 +48,9 @@ namespace FriendOrganizer.UI.ViewModel
         }
 
         private IEventAggregator _eventAggregator;
-
-
         public ICommand CreateNewDetailCommand { get; }
         public INavigationViewModel NavigationViewModel { get; }
-
-        private Func<IFriendDetailViewModel> _friendDetailViewModelCreator;
+        private IIndex<string, IDetailViewModel> _detailViewModelCreator;
         private IMessageDialogService _messageDialogService;
 
         public IDetailViewModel DetailViewModel
@@ -71,15 +74,7 @@ namespace FriendOrganizer.UI.ViewModel
                     return;
                 }
             }
-            switch (args.ViewModelName)
-            {
-                case nameof(FriendDetailViewModel):
-                    DetailViewModel = _friendDetailViewModelCreator();
-                    break;
-                default:
-                    break;
-            }
-
+            DetailViewModel = _detailViewModelCreator[args.ViewModelName];
             await DetailViewModel.LoadAsync(args.Id);
         }
 
