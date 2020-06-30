@@ -1,4 +1,5 @@
 ﻿using FriendOrganizer.UI.Event;
+using FriendOrganizer.UI.View.Services;
 using Prism.Commands;
 using Prism.Events;
 using System;
@@ -15,11 +16,11 @@ namespace FriendOrganizer.UI.ViewModel
         private bool _hasChanges;
         protected readonly IEventAggregator EventAggregator;
         private string _title;
-  
+        protected readonly IMessageDialogService MessageDialogService;
 
         public DelegateCommand SaveCommand { get; private set; }
-
         public DelegateCommand DeleteCommand { get; private set; }
+        public DelegateCommand CloseDetailViewCommand { get; }
 
         public string Title { 
             get => _title;
@@ -52,11 +53,32 @@ namespace FriendOrganizer.UI.ViewModel
             protected set { _id = value; }
         }
 
-        public DetailViewModelBase(IEventAggregator eventAggregator)
+        public DetailViewModelBase(IEventAggregator eventAggregator,
+            IMessageDialogService messageDialogService)
         {
             EventAggregator = eventAggregator;
+            MessageDialogService = messageDialogService;
             SaveCommand = new DelegateCommand(OnSaveExecute, OnSaveCanExecute);
             DeleteCommand = new DelegateCommand(OnDeleteExecute);
+            CloseDetailViewCommand = new DelegateCommand(OnCloseDetailViewExecute);
+        }
+
+        protected virtual void OnCloseDetailViewExecute()
+        {
+            if (HasChanges)
+            {
+                var result = MessageDialogService.ShowOkCancelDialog(
+                    "You've made changes. Close this item?","Question");
+                if (result == MessageDialogResult.Cancel)
+                {
+                    return;
+                }
+            }
+            EventAggregator.GetEvent<AfterDetailClosedEvent>()
+                .Publish(new AfterDetailClosedEventArgs { 
+                    Id = this.Id,
+                    ViewModelName = this.GetType().Name
+                });       
         }
 
         protected abstract void OnDeleteExecute();

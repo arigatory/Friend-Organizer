@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -32,5 +33,7 @@ namespace FriendOrganizer.Model
         public ICollection<FriendPhoneNumber> PhoneNumbers { get; set; }
 
         public ICollection<Meeting> Meetings { get; set; }
+
+        
     }
 }
