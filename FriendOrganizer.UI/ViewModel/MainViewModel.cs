@@ -15,6 +15,9 @@ namespace FriendOrganizer.UI.ViewModel
     {
 
         private IDetailViewModel _selectedDetailViewModel;
+        private IEventAggregator _eventAggregator;
+        private IIndex<string, IDetailViewModel> _detailViewModelCreator;
+        private IMessageDialogService _messageDialogService;
 
 
         public MainViewModel(INavigationViewModel navigationViewModel, 
@@ -37,13 +40,26 @@ namespace FriendOrganizer.UI.ViewModel
 
             NavigationViewModel = navigationViewModel;
             CreateNewDetailCommand = new DelegateCommand<Type>(OnCreateNewDetailExecute);
+            OpenSingleDetailViewCommand = new DelegateCommand<Type>(OnOpenSingleDetailViewExecute);
         }
 
       
 
+        private int nextNewItemId = 0;
         private void OnCreateNewDetailExecute(Type viewModelType)
         {
-            OnOpenDetailView(new OpenDetailViewEventArgs {  ViewModelName = viewModelType.Name });
+            
+            OnOpenDetailView(
+                new OpenDetailViewEventArgs { Id = nextNewItemId--,  ViewModelName = viewModelType.Name });
+        }
+
+        private void OnOpenSingleDetailViewExecute(Type viewModelType)
+        {
+            OnOpenDetailView(
+                new OpenDetailViewEventArgs { Id = -1,
+                    ViewModelName = viewModelType.Name 
+                });
+
         }
 
         public async Task LoadAsync()
@@ -51,14 +67,12 @@ namespace FriendOrganizer.UI.ViewModel
             await NavigationViewModel.LoadAsync();
         }
 
-        private IEventAggregator _eventAggregator;
+     
+
         public ICommand CreateNewDetailCommand { get; }
+        public ICommand OpenSingleDetailViewCommand { get; }
         public INavigationViewModel NavigationViewModel { get; }
-        private IIndex<string, IDetailViewModel> _detailViewModelCreator;
-        private IMessageDialogService _messageDialogService;
-
         public ObservableCollection<IDetailViewModel> DetailViewModels { get; }
-
         public IDetailViewModel SelectedDetailViewModel
         {
             get { return _selectedDetailViewModel; }

@@ -87,7 +87,7 @@ namespace FriendOrganizer.UI.ViewModel
 
         protected abstract bool OnSaveCanExecute();
 
-        public abstract Task LoadAsync(int? id);
+        public abstract Task LoadAsync(int id);
 
         protected virtual void RaiseDetailDeletedEvent(int modelID)
         {

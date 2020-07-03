@@ -107,6 +107,7 @@
     <Compile Include="Data\Repositories\IGenericRepository.cs" />
     <Compile Include="Data\Repositories\IMeetingRepository.cs" />
     <Compile Include="Data\Repositories\MeetingRepository.cs" />
+    <Compile Include="Data\Repositories\ProgrammingLanguageRepository.cs" />
     <Compile Include="Event\AfterDetailClosedEvent.cs" />
     <Compile Include="Event\AfterDetailDeletedEvent.cs" />
     <Compile Include="Event\AfterDetailSavedEvent.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\NavigationItemViewModel.cs" />
     <Compile Include="ViewModel\NavigationViewModel.cs" />
+    <Compile Include="ViewModel\ProgrammingLanguageDetailViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="View\FriendDetailView.xaml.cs">
       <DependentUpon>FriendDetailView.xaml</DependentUpon>
@@ -131,6 +133,9 @@
     </Compile>
     <Compile Include="View\NavigationView.xaml.cs">
       <DependentUpon>NavigationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\ProgrammingLanguageDetailView.xaml.cs">
+      <DependentUpon>ProgrammingLanguageDetailView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Services\IMessageDialogService.cs" />
     <Compile Include="View\Services\MessageDialogService.cs" />
@@ -162,6 +167,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\NavigationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\ProgrammingLanguageDetailView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
