@@ -4,6 +4,7 @@ using Prism.Commands;
 using Prism.Events;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -108,5 +109,49 @@ namespace FriendOrganizer.UI.ViewModel
             });
         }
 
+        protected virtual void RaiseCollectionSavedEvent()
+        {
+            EventAggregator.GetEvent<AfterCollectionSavedEvent>()
+                .Publish(new AfterCollectionSavedEventArgs { 
+                    ViewModelName = this.GetType().Name
+                });
+        }
+
+        protected async Task SaveWithOptimisticConcurrencyAsync(Func<Task> saveFunc,
+            Action afterSaveAction)
+        {
+            try
+            {
+                await saveFunc();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                var databaseValues = ex.Entries.Single().GetDatabaseValues();
+                if (databaseValues == null)
+                {
+                    MessageDialogService.ShowInfoDialog("The entity has been deleted by another user");
+                    RaiseDetailDeletedEvent(Id);
+                    return;
+                }
+
+                var result = MessageDialogService.ShowOkCancelDialog("The entity has been changed in the meantime by someone else. Click OK" +
+                    " to save your changes anyway, click Cancel to reload the entity from the database.", "Question");
+
+                if (result == MessageDialogResult.OK)
+                {
+                    // update the original values with db values
+                    var entry = ex.Entries.Single();
+                    entry.OriginalValues.SetValues(entry.GetDatabaseValues());
+                    await saveFunc();
+                }
+                else
+                {
+                    await ex.Entries.Single().ReloadAsync();
+                    await LoadAsync(Id);
+                }
+            }
+
+            afterSaveAction();
+        }
     }
 }
