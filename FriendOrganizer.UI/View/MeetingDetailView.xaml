@@ -44,7 +44,7 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <Label Content="Added Friends"/>
+            <Label Content="Added Friends" BorderThickness="0 0 0 2" BorderBrush="#cccccc"/>
             <ListView Grid.Row="1" ItemsSource="{Binding AddedFriends}"
                       SelectedItem="{Binding SelectedAddedFriend}"/>
 
@@ -53,7 +53,7 @@
                 <Button Content="&gt;&gt;" Margin="10 0 10 10" Command="{Binding RemoveFriendCommand}"/>
             </StackPanel>
 
-            <Label Content="Available Friends" Grid.Column="2"/>
+            <Label Content="Available Friends" Grid.Column="2" BorderThickness="0 0 0 2" BorderBrush="#cccccc"/>
             <ListView Grid.Row="1" ItemsSource="{Binding AvailableFriends}"
                       SelectedItem="{Binding SelectedAvailableFriend}" Grid.Column="2"/>
         </Grid>
